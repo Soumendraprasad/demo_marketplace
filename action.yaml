@@ -1,5 +1,4 @@
 name: generate tests
-
 on:
   push:
     branches: [main]
