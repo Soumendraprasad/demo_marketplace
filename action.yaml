@@ -1,4 +1,6 @@
 name: generate tests
+description: "This Action installs gocodeo for generating tests."
+author: "Your Name <your.email@example.com>"
 on:
   push:
     branches: [main]
