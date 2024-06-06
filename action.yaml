@@ -1,8 +1,7 @@
 name: generate tests
 description: "This Action installs gocodeo for generating tests."
 author: "Your Name <your.email@example.com>"
-icon: "octagon"  # Setting the icon to 'octagon'
-color: "orange"
+
 on:
   push:
     branches: [main]
