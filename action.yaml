@@ -1,9 +1,9 @@
-name: generate tests
+name: GoCodeo CLI
 description: "This Action installs gocodeo for generating tests."
-author: "Your Name <your.email@example.com>"
+
 
 on:
-  push:
+  pull_request:
     branches: [main]
 
 jobs:
@@ -11,8 +11,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Install gocodeo
-        run: pip install gocodeo==0.0.0.15
+    - name: Set path variable
+      id: set-path
+      run: echo "::set-output name=path::${{ secrets.path }}"
+
+    - name: Install gocodeo
+      run: pip install gocodeo==0.0.0.15
+
+    - name: Install Angular CLI
+      run: npm install -g @angular/cli
+
+    - name: Install npm dependencies
+      run: npm install
+
+    - name: Generating test cases
+      run: |
+        echo "${{ secrets.secret }}" | gocodeo-advanced generate ${{ steps.set-path.outputs.path }}
+    - name: Check if branch exists
+      run: git fetch origin ${{ secrets.branch }}:${{ secrets.branch }} && git checkout ${{ secrets.branch }}
+
+    - name: Commit and push changes
+      env:
+        PAT: ${{ secrets.PAT }}
+        EMAIL: ${{ secrets.EMAIL }}
+        NAME: ${{ secrets.NAME }}
+      run: |
+        git config --local user.email "${EMAIL}"
+        git config --local user.name "${NAME}"
+        git checkout ${{ secrets.branch }}
+        git pull origin ${{ secrets.branch }}
+        git add ${{ steps.set-path.outputs.path }}
+        git commit -m "Add generated test cases"
+        git push origin HEAD:${{ github.event.pull_request.head.ref }}
