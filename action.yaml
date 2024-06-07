@@ -30,16 +30,20 @@ runs:
     - name: Set path variable
       id: set-path
       run: echo "::set-output name=path::${{ inputs.path }}"
+      shell: bash
 
     - name: Install gocodeo
       run: pip install gocodeo==0.0.0.15
+      shell: bash
 
     - name: Generating test cases
       run: |
         echo "${{ inputs.secret }}" | gocodeo-advanced generate ${{ steps.set-path.outputs.path }}
+      shell: bash
 
     - name: Check if branch exists
       run: git fetch origin ${{ inputs.branch }}:${{ inputs.branch }} && git checkout ${{ inputs.branch }}
+      shell: bash
 
     - name: Commit and push changes
       env:
@@ -54,3 +58,4 @@ runs:
         git add ${{ steps.set-path.outputs.path }}
         git commit -m "Add generated test cases"
         git push origin HEAD:${{ github.event.pull_request.head.ref }}
+      shell: bash
